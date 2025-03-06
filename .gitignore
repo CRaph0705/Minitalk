@@ -1,1 +1,8 @@
 .DS_Store
+/.vscode
+
+/libft/obj
+/libft/libft.a
+
+/obj
+/bobj
