@@ -6,7 +6,7 @@
 /*   By: rcochran <rcochran@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/04 11:16:31 by rcochran          #+#    #+#             */
-/*   Updated: 2025/01/31 16:12:57 by rcochran         ###   ########.fr       */
+/*   Updated: 2025/03/07 16:02:05 by rcochran         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ char	*convert_dec_in_new_base(int nbr, char *base_to)
 	}
 	else
 		n = nbr;
-	while (n >= base_len)
+	while (n > 0)
 	{
 		str[len--] = base_to[n % base_len];
 		n /= base_len;
@@ -80,7 +80,7 @@ size_t	get_num_len(int n, char *base)
 	size_t	base_len;
 	size_t	num;
 
-	len = 0;
+	len = 1;
 	base_len = ft_strlen(base);
 	if (n < 0)
 	{
@@ -101,16 +101,10 @@ char	*ft_convert_base(char *nbr, char *base_from, char *base_to)
 {
 	int		dec_num;
 	char	*num_str;
-	size_t	num_str_len;
 
 	if (is_base_valid(base_from) == 0 || is_base_valid(base_to) == 0)
 		return (NULL);
 	dec_num = ft_atoi_base(nbr, base_from);
-	num_str = NULL;
-	num_str_len = get_num_len(dec_num, base_to);
-	num_str = ft_calloc(num_str_len + 1, sizeof(char));
-	if (!num_str)
-		return (NULL);
 	num_str = convert_dec_in_new_base(dec_num, base_to);
 	return (num_str);
 }

@@ -6,7 +6,7 @@
 /*   By: rcochran <rcochran@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/24 16:41:56 by rcochran          #+#    #+#             */
-/*   Updated: 2025/01/31 16:07:36 by rcochran         ###   ########.fr       */
+/*   Updated: 2025/03/07 15:57:21 by rcochran         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,9 +37,9 @@ int	ft_atoi_base(char *str, char *base)
 			sign = -sign;
 		i++;
 	}
-	while (str[i] && is_in_base(str[i], base) == 1)
+	while (str[i] && is_in_base(str[i], base))
 	{
-		num = num * (int)base_len + str[i] - '0';
+		num = num * (int)base_len + (ft_strchr(base, str[i]) - base);
 		i++;
 	}
 	return (num * sign);
@@ -47,7 +47,5 @@ int	ft_atoi_base(char *str, char *base)
 
 int	is_in_base(char c, char *base)
 {
-	if (ft_strchr(base, c) != NULL)
-		return (1);
-	return (0);
+	return (ft_strchr(base, c) != NULL);
 }
