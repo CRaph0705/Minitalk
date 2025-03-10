@@ -6,7 +6,7 @@
 /*   By: rcochran <rcochran@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 15:09:02 by rcochran          #+#    #+#             */
-/*   Updated: 2025/03/10 18:17:20 by rcochran         ###   ########.fr       */
+/*   Updated: 2025/03/10 20:07:41 by rcochran         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,7 @@
 #include <signal.h>
 #define END_SIG '\0'
 
-void	handle_sig(int sig);
-
+void	handle_sig(int sig, siginfo_t *sig_info, void *ptr);
 char	*char_to_str(unsigned char c);
 
 char	*char_to_str(unsigned char c)
@@ -29,22 +28,13 @@ char	*char_to_str(unsigned char c)
 	return (str);
 }
 
-char	*ft_strnew(size_t size)
-{
-	char	*str;
-
-	str = (char *)malloc(sizeof(char) * (size + 1));
-	if (str)
-		memset(str, 0, size + 1);
-	return (str);
-}
-
-void	handle_sig(int sig)
+void	handle_sig(int sig, siginfo_t *sig_info, void *ptr)
 {
 	static unsigned char	c;
 	static char				*buffer;
 	static int				i;
 
+	(void)ptr;
 	c |= (sig == SIGUSR2) << (7 - i);
 	i++;
 	if (i == 8)
@@ -54,6 +44,7 @@ void	handle_sig(int sig)
 			ft_printf("%s\n", buffer);
 			free(buffer);
 			buffer = NULL;
+			kill(sig_info->si_pid, SIGUSR1);
 		}
 		else
 		{
@@ -64,14 +55,25 @@ void	handle_sig(int sig)
 	}
 }
 
+/*
+ * Signal vector "template" used in sigaction call.
+ */
+// struct  sigaction {
+// 	union __sigaction_u __sigaction_u;  /* signal handler */
+// 	sigset_t sa_mask;               /* signal mask to apply */
+// 	int     sa_flags;               /* see signal options below */
+// };
 int	main(void)
 {
-	int	pid;
+	struct sigaction	sa;
+	int					pid;
 
 	pid = getpid();
 	ft_printf("server pid : %d\n", pid);
-	signal(SIGUSR1, handle_sig);
-	signal(SIGUSR2, handle_sig);
+	sa.sa_sigaction = handle_sig;
+	sa.sa_flags = SA_SIGINFO;
+	sigaction(SIGUSR1, &sa, NULL);
+	sigaction(SIGUSR2, &sa, NULL);
 	while (1)
 		pause();
 	return (0);

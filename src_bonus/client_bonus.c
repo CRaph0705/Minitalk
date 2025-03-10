@@ -6,7 +6,7 @@
 /*   By: rcochran <rcochran@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 15:08:56 by rcochran          #+#    #+#             */
-/*   Updated: 2025/03/10 16:50:07 by rcochran         ###   ########.fr       */
+/*   Updated: 2025/03/10 19:57:59 by rcochran         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,9 +57,7 @@ void	send_char(int pid, unsigned char c)
 void	handle_response(int sig)
 {
 	if (sig == SIGUSR1)
-		ft_printf("1 received");
-	else if (sig == SIGUSR2)
-		ft_printf("0 received");
+		ft_putstr("msg received\n");
 }
 
 int	main(int ac, char **av)
@@ -71,7 +69,7 @@ int	main(int ac, char **av)
 	signal(SIGUSR2, handle_response);
 	if (ac != 3)
 	{
-		ft_printf("./client <pid> <msg>");
+		ft_putstr("./client <pid> <msg>");
 		exit(1);
 	}
 	server_pid = ft_atoi(av[1]);
