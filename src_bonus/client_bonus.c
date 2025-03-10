@@ -6,18 +6,18 @@
 /*   By: rcochran <rcochran@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 15:08:56 by rcochran          #+#    #+#             */
-/*   Updated: 2025/03/10 15:13:07 by rcochran         ###   ########.fr       */
+/*   Updated: 2025/03/10 16:50:07 by rcochran         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minitalk.h"
+#include "libft.h"
+#include <signal.h>
 
-void	send_msg(int pid, unsigned char *to_send);
+void	send_msg(int pid, char *to_send);
 void	send_char(int pid, unsigned char c);
-void	send_null(int pid);
 void	handle_response(int sig);
 
-void	send_msg(int pid, unsigned char *to_send)
+void	send_msg(int pid, char *to_send)
 {
 	int		i;
 
@@ -29,67 +29,55 @@ void	send_msg(int pid, unsigned char *to_send)
 		send_char(pid, to_send[i]);
 		i++;
 	}
-	send_null(pid);
+	send_char(pid, '\0');
 }
 
 void	send_char(int pid, unsigned char c)
 {
-	char	*binary;
-	int		index;
+	int		i;
 
-	binary = ft_convert_base(ft_itoa(c), "0123456789", "01");
-	if (!binary)
-		return (send_null(pid));
-	index = 0;
-	while (binary[index])
+	i = 7;
+	while (i >= 0)
 	{
-		send_char(pid, c);
-		index++;
 		usleep(100);
-	}
-	free(binary);
-	if (binary[index] == '0')
-		kill(pid, SIGUSR1);
-	else if (binary[index] == '1')
-		kill(pid, SIGUSR2);
-}
-
-void	send_null(int pid)
-{
-	int	i;
-
-	i = 8;
-	while (i != 0)
-	{
-		kill(pid, SIGUSR1);
+		if ((c >> i) & 1)
+		{
+			kill(pid, SIGUSR2);
+			usleep(100);
+		}
+		else
+		{
+			kill(pid, SIGUSR1);
+			usleep(100);
+		}
 		i--;
-		usleep(100);
 	}
 }
 
 void	handle_response(int sig)
 {
 	if (sig == SIGUSR1)
-		ft_printf("'1' received");
+		ft_printf("1 received");
 	else if (sig == SIGUSR2)
-		ft_printf("'0' received");
-	else
-		return ;
+		ft_printf("0 received");
 }
 
 int	main(int ac, char **av)
 {
-	int				server_pid;
-	unsigned char	*to_send;
+	int		server_pid;
+	char	*to_send;
 
-	if (ac != 3)
-		exit(1);
 	signal(SIGUSR1, handle_response);
 	signal(SIGUSR2, handle_response);
+	if (ac != 3)
+	{
+		ft_printf("./client <pid> <msg>");
+		exit(1);
+	}
 	server_pid = ft_atoi(av[1]);
-	if (server_pid == 0)
+	if (server_pid <= 0)
 		return (0);
-	to_send = (unsigned char *)av[2];
+	to_send = av[2];
 	send_msg(server_pid, to_send);
 	return (0);
 }

@@ -6,20 +6,14 @@
 /*   By: rcochran <rcochran@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 14:51:42 by rcochran          #+#    #+#             */
-/*   Updated: 2025/03/10 16:30:59 by rcochran         ###   ########.fr       */
+/*   Updated: 2025/03/10 16:42:23 by rcochran         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-//step 1 : get its pid and display it
-// handle sig reception / errors
-// translate binary in ascii/char??
-// pause - wait for signal
-// man pause
-
-// https://fr.wikipedia.org/wiki/Manipulation_de_bits
-#include "minitalk.h"
+#include "libft.h"
+#include <signal.h>
 #define END_SIG '\0'
-
+// https://fr.wikipedia.org/wiki/Manipulation_de_bits
 
 void	handle_sig(int sig);
 

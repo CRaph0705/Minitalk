@@ -6,7 +6,7 @@
 /*   By: rcochran <rcochran@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/26 11:35:25 by rcochran          #+#    #+#             */
-/*   Updated: 2025/01/21 13:53:47 by rcochran         ###   ########.fr       */
+/*   Updated: 2025/03/10 18:16:42 by rcochran         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,17 +39,20 @@ char	*extract_line(char *buf)
 	return (line);
 }
 
-char	*append_and_free(char *buf, char *buffer)
+/* return new str : *buffer at the end of *buf and free buf */
+char	*append_and_free(char *buffer, char *add)
 {
-	char	*tmp;
+	char	*new_buffer;
 
-	if (!buf && !buffer)
+	if (!buffer && !add)
 		return (NULL);
-	tmp = ft_strjoin(buf, buffer);
-	if (tmp == NULL)
+	if (!buffer)
+		return (add);
+	new_buffer = ft_strjoin(buffer, add);
+	if (new_buffer == NULL)
 		return (NULL);
-	free(buf);
-	return (tmp);
+	free(buffer);
+	return (new_buffer);
 }
 
 char	*get_buffer(int fd, char *buf)

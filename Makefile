@@ -6,7 +6,7 @@
 #    By: rcochran <rcochran@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/06 14:34:41 by rcochran          #+#    #+#              #
-#    Updated: 2025/03/07 00:42:58 by rcochran         ###   ########.fr        #
+#    Updated: 2025/03/10 16:40:12 by rcochran         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,16 +16,16 @@ CC			= 	cc
 CFLAGS		= 	-Wall -Werror -Wextra
 AR			=	ar -rcs
 NAME		= 	client server
-BNAME		=	######
+BNAME		=	bclient bserver
 
 LIBFT_PATH	=	./libft
 LIBFT		=	$(LIBFT_PATH)/libft.a
 
-INCLUDES	= -I$(LIBFT_PATH)/includes -I ./includes
+INCLUDES	= -I$(LIBFT_PATH)/includes
 BINCLUDES	=	-I ./bonus
 
 SRC_DIR		= 	src/
-# SRC_BDIR	= 	bonus/
+SRC_BDIR	= 	src_bonus/
 
 
 all : $(NAME)
@@ -37,6 +37,7 @@ clean :
 
 fclean : clean
 	rm -f $(NAME)
+	rm -f $(BNAME)
 	rm -f $(LIBFT)
 
 re : fclean all
@@ -47,6 +48,16 @@ client : $(LIBFT)
 server : $(LIBFT)
 	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $(SRC_DIR)server.c -L$(LIBFT_PATH) -lft
 
+bclient : $(LIBFT)
+	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $(SRC_BDIR)client_bonus.c -L$(LIBFT_PATH) -lft
+
+bserver : $(LIBFT)
+	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $(SRC_BDIR)server_bonus.c -L$(LIBFT_PATH) -lft
+
 $(LIBFT):
 	make -C $(LIBFT_PATH)
+
+bonus: $(BNAME)
+
+rebonus: fclean bonus
 

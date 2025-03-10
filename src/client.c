@@ -6,12 +6,12 @@
 /*   By: rcochran <rcochran@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 14:51:40 by rcochran          #+#    #+#             */
-/*   Updated: 2025/03/10 16:28:32 by rcochran         ###   ########.fr       */
+/*   Updated: 2025/03/10 16:42:00 by rcochran         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minitalk.h"
-
+#include "libft.h"
+#include <signal.h>
 // client must convert msg in binary and send it to server
 
 // step 1 need server PID
@@ -25,7 +25,6 @@ You can only use these two signals: SIGUSR1 and SIGUSR2.
 */
 void	send_msg(int pid, char *to_send);
 void	send_char(int pid, unsigned char c);
-void	handle_response(int sig);
 
 void	send_msg(int pid, char *to_send)
 {
