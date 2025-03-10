@@ -6,46 +6,40 @@
 /*   By: rcochran <rcochran@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 14:51:42 by rcochran          #+#    #+#             */
-/*   Updated: 2025/03/07 18:53:10 by rcochran         ###   ########.fr       */
+/*   Updated: 2025/03/10 16:30:59 by rcochran         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-#include "minitalk.h"
 
 //step 1 : get its pid and display it
 // handle sig reception / errors
 // translate binary in ascii/char??
-
-// https://fr.wikipedia.org/wiki/Manipulation_de_bits
-void	handle_sig(int sig);
-
-
-//int sigaction(int signum, const struct sigaction *act, struct sigaction *oldact); ???
-void	handle_sig(int sig)
-{
-	static int	c;
-	int			bit;
-
-	ft_printf("got pinged\n");
-	bit = 0;
-	c = 0;
-	if (sig == SIGUSR1)
-		c = c << 1;
-	else if (sig == SIGUSR2)
-		c = c << 1 | 1;
-	bit++;
-	if (bit == 8)
-	{
-		if (c == 0)
-			ft_printf("\n");
-		else
-			ft_printf("%c", c);
-		bit = 0;
-		c = 0;
-	}
-}
 // pause - wait for signal
 // man pause
+
+// https://fr.wikipedia.org/wiki/Manipulation_de_bits
+#include "minitalk.h"
+#define END_SIG '\0'
+
+
+void	handle_sig(int sig);
+
+void	handle_sig(int sig)
+{
+	static unsigned char	c;
+	static int				i;
+
+	c |= (sig == SIGUSR2) << (7 - i);
+	i++;
+	if (i == 8)
+	{
+		if (c == END_SIG)
+			ft_putchar('\n');
+		else
+			ft_putchar(c);
+		c = 0;
+		i = 0;
+	}
+}
 
 int	main(void)
 {
