@@ -6,7 +6,7 @@
 /*   By: rcochran <rcochran@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 15:09:02 by rcochran          #+#    #+#             */
-/*   Updated: 2025/03/10 20:07:41 by rcochran         ###   ########.fr       */
+/*   Updated: 2025/03/12 18:42:10 by rcochran         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ void	handle_sig(int sig, siginfo_t *sig_info, void *ptr)
 	(void)ptr;
 	c |= (sig == SIGUSR2) << (7 - i);
 	i++;
+	kill(sig_info->si_pid, SIGUSR1);
 	if (i == 8)
 	{
 		if (c == END_SIG)
@@ -44,7 +45,8 @@ void	handle_sig(int sig, siginfo_t *sig_info, void *ptr)
 			ft_printf("%s\n", buffer);
 			free(buffer);
 			buffer = NULL;
-			kill(sig_info->si_pid, SIGUSR1);
+			usleep(100);
+			kill(sig_info->si_pid, SIGUSR2);
 		}
 		else
 		{
