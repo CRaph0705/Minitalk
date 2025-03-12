@@ -6,7 +6,7 @@
 #    By: rcochran <rcochran@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/06 14:34:41 by rcochran          #+#    #+#              #
-#    Updated: 2025/03/10 16:40:12 by rcochran         ###   ########.fr        #
+#    Updated: 2025/03/12 18:44:39 by rcochran         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -49,10 +49,10 @@ server : $(LIBFT)
 	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $(SRC_DIR)server.c -L$(LIBFT_PATH) -lft
 
 bclient : $(LIBFT)
-	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $(SRC_BDIR)client_bonus.c -L$(LIBFT_PATH) -lft
+	$(CC) $(CFLAGS) $(INCLUDES) -o client $(SRC_BDIR)client_bonus.c -L$(LIBFT_PATH) -lft
 
 bserver : $(LIBFT)
-	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $(SRC_BDIR)server_bonus.c -L$(LIBFT_PATH) -lft
+	$(CC) $(CFLAGS) $(INCLUDES) -o server $(SRC_BDIR)server_bonus.c -L$(LIBFT_PATH) -lft
 
 $(LIBFT):
 	make -C $(LIBFT_PATH)
