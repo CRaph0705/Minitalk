@@ -6,7 +6,7 @@
 /*   By: rcochran <rcochran@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 15:08:56 by rcochran          #+#    #+#             */
-/*   Updated: 2025/03/12 18:39:08 by rcochran         ###   ########.fr       */
+/*   Updated: 2025/03/12 23:53:04 by rcochran         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 #define WAITING_RESPONSE 100
 
-int g_wait = WAITING_RESPONSE;
+int	g_wait = WAITING_RESPONSE;
 
 void	send_msg(int pid, char *to_send);
 void	send_char(int pid, unsigned char c);
@@ -43,22 +43,22 @@ void	send_char(int pid, unsigned char c)
 	i = 7;
 	while (i >= 0)
 	{
+		g_wait = WAITING_RESPONSE;
 		if ((c >> i) & 1)
-			kill(pid, SIGUSR2);
+			(usleep(100), kill(pid, SIGUSR2));
 		else
-			kill(pid, SIGUSR1);
+			(usleep(100), kill(pid, SIGUSR1));
 		i--;
 		while (g_wait > 0)
 		{
-			usleep(10);
+			usleep(1000);
 			g_wait--;
 		}
 		if (g_wait == 0)
 		{
-			ft_putstr("msg not received\n");
+			ft_putstr("Timeout : no response from server\nExit.\n");
 			exit(1);
 		}
-		g_wait = 100;
 	}
 }
 
@@ -69,7 +69,6 @@ void	handle_response(int sig)
 	else if (sig == SIGUSR2)
 	{
 		ft_putstr("msg received\n");
-		g_wait = 100;
 		exit(1);
 	}
 }
@@ -78,6 +77,7 @@ int	main(int ac, char **av)
 {
 	int		server_pid;
 	char	*to_send;
+
 	signal(SIGUSR1, handle_response);
 	signal(SIGUSR2, handle_response);
 	if (ac != 3)
@@ -90,8 +90,7 @@ int	main(int ac, char **av)
 		return (0);
 	to_send = av[2];
 	send_msg(server_pid, to_send);
-
-	while(1)
+	while (1)
 		pause();
 	return (0);
 }
