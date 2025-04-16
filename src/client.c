@@ -6,25 +6,20 @@
 /*   By: rcochran <rcochran@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 14:51:40 by rcochran          #+#    #+#             */
-/*   Updated: 2025/03/10 16:42:00 by rcochran         ###   ########.fr       */
+/*   Updated: 2025/04/16 15:27:47 by rcochran         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 #include <signal.h>
-// client must convert msg in binary and send it to server
 
-// step 1 need server PID
-// step 2 need the str to send
-// convert in binary then send
-/* 
-Problematic :
-You can only use these two signals: SIGUSR1 and SIGUSR2. 
-=> sigusr1 == true // sigusr2 == true -> send 1 or 0
-=> usleep() pour ajouter un délai entre chaque envoi ?
-*/
+#define WAITING_RESPONSE 10000
+
+int	g_wait = WAITING_RESPONSE;
+
 void	send_msg(int pid, char *to_send);
 void	send_char(int pid, unsigned char c);
+void	handle_response(int sig);
 
 void	send_msg(int pid, char *to_send)
 {
@@ -48,18 +43,35 @@ void	send_char(int pid, unsigned char c)
 	i = 7;
 	while (i >= 0)
 	{
-		usleep(100);
 		if ((c >> i) & 1)
-		{
 			kill(pid, SIGUSR2);
-			usleep(100);
-		}
 		else
-		{
 			kill(pid, SIGUSR1);
-			usleep(100);
-		}
 		i--;
+		while (g_wait > 0)
+		{
+			usleep(100);
+			g_wait--;
+		}
+		if (g_wait == 0)
+		{
+			ft_putstr("msg not received\n");
+			exit(1);
+		}
+		usleep(100);
+		g_wait = WAITING_RESPONSE;
+	}
+}
+
+void	handle_response(int sig)
+{
+	if (sig == SIGUSR1)
+		g_wait = -1;
+	else if (sig == SIGUSR2)
+	{
+		ft_putstr("msg received\n");
+		g_wait = 100;
+		exit(1);
 	}
 }
 
@@ -68,9 +80,11 @@ int	main(int ac, char **av)
 	int		server_pid;
 	char	*to_send;
 
+	signal(SIGUSR1, handle_response);
+	signal(SIGUSR2, handle_response);
 	if (ac != 3)
 	{
-		ft_printf("./client <pid> <msg>");
+		ft_putstr("./client <pid> <msg>");
 		exit(1);
 	}
 	server_pid = ft_atoi(av[1]);
@@ -78,5 +92,7 @@ int	main(int ac, char **av)
 		return (0);
 	to_send = av[2];
 	send_msg(server_pid, to_send);
+	while (1)
+		pause();
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: rcochran <rcochran@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 15:09:02 by rcochran          #+#    #+#             */
-/*   Updated: 2025/03/12 23:51:41 by rcochran         ###   ########.fr       */
+/*   Updated: 2025/04/16 15:27:50 by rcochran         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,40 +31,32 @@ char	*char_to_str(unsigned char c)
 void	handle_sig(int sig, siginfo_t *sig_info, void *ptr)
 {
 	static unsigned char	c;
+	static char				*buffer;
 	static int				i;
-	static char				*buffer = 0;
 
-	if (!buffer)
-		buffer = ft_calloc(1, 1);
 	(void)ptr;
 	c |= (sig == SIGUSR2) << (7 - i);
 	i++;
-	(usleep(100), kill(sig_info->si_pid, SIGUSR1));
+	kill(sig_info->si_pid, SIGUSR1);
 	if (i == 8)
 	{
 		if (c == END_SIG)
 		{
-			(ft_printf("%s\n", buffer), free(buffer), buffer = NULL);
-			(usleep(100), kill(sig_info->si_pid, SIGUSR2));
+			ft_printf("%s\n", buffer);
+			free(buffer);
+			buffer = NULL;
+			usleep(100);
+			kill(sig_info->si_pid, SIGUSR2);
 		}
 		else
 		{
 			buffer = append_and_free(buffer, char_to_str(c));
-			usleep(100);
 		}
 		c = 0;
 		i = 0;
 	}
 }
 
-/*
- * Signal vector "template" used in sigaction call.
- */
-// struct  sigaction {
-// 	union __sigaction_u __sigaction_u;  /* signal handler */
-// 	sigset_t sa_mask;               /* signal mask to apply */
-// 	int     sa_flags;               /* see signal options below */
-// };
 int	main(void)
 {
 	struct sigaction	sa;

@@ -6,14 +6,14 @@
 /*   By: rcochran <rcochran@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 15:08:56 by rcochran          #+#    #+#             */
-/*   Updated: 2025/03/12 23:53:04 by rcochran         ###   ########.fr       */
+/*   Updated: 2025/04/16 15:27:52 by rcochran         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 #include <signal.h>
 
-#define WAITING_RESPONSE 100
+#define WAITING_RESPONSE 10000
 
 int	g_wait = WAITING_RESPONSE;
 
@@ -43,22 +43,23 @@ void	send_char(int pid, unsigned char c)
 	i = 7;
 	while (i >= 0)
 	{
-		g_wait = WAITING_RESPONSE;
 		if ((c >> i) & 1)
-			(usleep(100), kill(pid, SIGUSR2));
+			kill(pid, SIGUSR2);
 		else
-			(usleep(100), kill(pid, SIGUSR1));
+			kill(pid, SIGUSR1);
 		i--;
 		while (g_wait > 0)
 		{
-			usleep(1000);
+			usleep(100);
 			g_wait--;
 		}
 		if (g_wait == 0)
 		{
-			ft_putstr("Timeout : no response from server\nExit.\n");
+			ft_putstr("msg not received\n");
 			exit(1);
 		}
+		usleep(100);
+		g_wait = WAITING_RESPONSE;
 	}
 }
 
@@ -69,6 +70,7 @@ void	handle_response(int sig)
 	else if (sig == SIGUSR2)
 	{
 		ft_putstr("msg received\n");
+		g_wait = WAITING_RESPONSE;
 		exit(1);
 	}
 }
